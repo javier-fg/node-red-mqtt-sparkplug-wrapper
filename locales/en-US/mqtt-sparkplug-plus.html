@@ -1,4 +1,4 @@
-<script type="text/html" data-help-name="mqtt sparkplug device">
+<script type="text/html" data-help-name="sparkplug virtual device">
     <p>This node will connect to an MQTT Server and act as an MQTT Edge of Network (EoN) Node.</p>
     
     <h3>Getting Started</h3>
@@ -117,7 +117,7 @@ msg = {
        <h4>NBIRTH</h4>
         <p>Node Birth will be send by the node when the node-red runtime has started and the node has a connection the the MQTT Broker. This message will also be send when a "Rebirth" NCMD is received</p>
         <h4>NCMD</h4>
-        The MQTT Sparkplug Device node will handle the following messages:
+        The sparkplug virtual device node will handle the following messages:
         <p>The node will handle incoming NCMD commands (currently only Rebirth is supported)</p>
         <h4>NDEATH</h4>
         <p>The node will send NDEATH when node-red runtime is stopped (it will be send on both a gracefull shutdown and a unexpected shutdown).</p>
@@ -129,7 +129,7 @@ msg = {
         <p>DDEATH can be sending msg.command.device.death = true</p>    
 </script>
 
-<script type="text/html" data-help-name="mqtt sparkplug in">
+<script type="text/html" data-help-name="sparkplug msg in">
     <p>Connects to a MQTT broker and subscribes to messages from the specified topic.</p>
         <h3>Outputs</h3>
         <dl class="message-properties">
@@ -152,7 +152,7 @@ msg = {
 <script type="text/html" data-help-name="mqtt-sparkplug-broker">
     <p>Configuration for a connection to an MQTT broker.</p>
     <p>This configuration will create a single connection to the broker which can
-       then be reused by <code>MQTT Sparkplug In</code> and <code>MQTT Sparkplug Device</code> nodes.</p>
+       then be reused by <code>sparkplug msg in</code> and <code>sparkplug virtual device</code> nodes.</p>
     <p>The node will generate a random Client ID if one is not set and the
        node is configured to use a Clean Session connection. If a Client ID is set,
        it must be unique to the broker you are connecting to.</p>
@@ -174,7 +174,7 @@ msg = {
     <p><b><u>The full set of buffered data will be kep in memory, so do not use this feature for high thoughput applications. (or make sure that you have a enough RAM)</u></b></p>
 </script>
 
-<script type="text/html" data-help-name="mqtt sparkplug out">
+<script type="text/html" data-help-name="sparkplug msg out">
     <p>Connects to a MQTT broker and publishes messages.</p>
     <h3>Inputs</h3>
     <dl class="message-properties">
