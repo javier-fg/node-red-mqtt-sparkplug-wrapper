@@ -1,5 +1,5 @@
 {
- "mqtt-sparkplug-plus": {
+ "mqtt-sparkplug-wrapper": {
         "label": {
             "name" : "Name",
             "username": "Username",
@@ -10,6 +10,7 @@
             "aliasMetrics" :  "Use Alias for Metrics",
             "compressoutput" : "Compress Body",
             "messagetype": "Msg. Type",
+            "nodetype": "Node type",
             "eon" : "sp EoN",
             "eond" : "sp EoND",
             "group" : "sp Group",
@@ -59,6 +60,7 @@
             "connection": "MQTT Broker",
             "security": "MQTT Security",
             "sparkplug": "Sparkplug",
+            "sparkplugNode": "Sparkplug Node",
             "advanced" : "Advanced",
             "metrics" : " Metrics"
         },
@@ -68,7 +70,7 @@
             "eondname":"Sparplug Device Name (EoND)",
             "eonname":"Sparplug Edge Name (EoN) ",
             "groupname":"Sparplug Group Name",
-            "name": "Sparkplug Device",
+            "name": "Node name",
             "command": "NDATA"
         },
         "state": {

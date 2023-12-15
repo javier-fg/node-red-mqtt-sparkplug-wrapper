@@ -1,6 +1,29 @@
+# -- WORK IN PROGRESS --
+
 # MQTT Sparkplug implementation for Node-Red
 
-MQTT-Sparkplug-Plus is a set of Node-Red nodes, that will enable Node-Red to communicate with other client over MQTT using the sparkplug b protocol. The package contains the followings nodes:
+Node-Red mqtt-sparkplug-wrapper is a set of Node-Red nodes, that will enable Node-Red to communicate with other client over MQTT using the Sparkplug b (spB) protocol. To know more about the Eclipse Sparkplug B standard visit their website [Eclipse Sparkplug](https://sparkplug.eclipse.org/). 
+
+This node is based on the mqtt-sparkplug-wrapper source code at [GitHub Repository](https://github.com/thomassorensen2650/node-red-contrib-mqtt-sparkplug-wrapper)
+
+# Todo Features
+ - [x] Re-structure base source code, rename node.
+ - [ ] spB virtual device node - Create a virtual edge (EoN) / device (EoND) spB node.
+ - [ ] spB input message node - Attach to a spB topic and parse messages.
+ - [ ] spB output message node - Attach to a spB topic and parse messages.
+ - [ ] spb device node - This node will receive the data from an existing spB node, as well as being able to send commands.
+
+
+
+
+
+
+---
+# -- ORIGINAL README --
+
+# MQTT Sparkplug implementation for Node-Red
+
+mqtt-sparkplug-wrapper is a set of Node-Red nodes, that will enable Node-Red to communicate with other client over MQTT using the sparkplug b protocol. The package contains the followings nodes:
 
 ## mqtt sparkplug device
 The *mqtt sparkplug device* act as a [Sparkplug B complient](https://s3.amazonaws.com/ignition-modules/Current/Sparkplug+Specification.pdf) EoN Node. 
@@ -114,7 +137,7 @@ The *mqtt sparkplug in* node makes it possible to subscribe to sparkplug b mqtt 
 The *mqtt sparkplug in* node makes it possible to publish sparkplug b mqtt messages. The node almost identical to the default node-red *mqtt out* node, but it will encode the sparkplug/protobuf payload before sending message.
 
 # Installation
-npm install node-red-contrib-mqtt-sparkplug-plus
+npm install node-red-contrib-mqtt-sparkplug-wrapper
 
 # Usage
 The easiest way to get started is to start with the example that is provided with the module.
@@ -122,7 +145,7 @@ The easiest way to get started is to start with the example that is provided wit
 ## From Example
 1. Open the Node-Red Export Dialog
 2. Select the Examples Tab
-3. Navigate to Node-red-contrib-mqtt-sparkplug-plus, and select the Simple Device Example
+3. Navigate to Node-red-contrib-mqtt-sparkplug-wrapper, and select the Simple Device Example
 4. Deploy changes to Node-Red
 5. Press the "Send Metrics" Inject node to write metrics to the new device (This will trigger a DBIRTH and NDATA first and pressed and a NDATA each time after that)
 

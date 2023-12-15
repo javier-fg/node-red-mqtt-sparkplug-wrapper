@@ -1,18 +1,18 @@
 {
-  "name": "node-red-contrib-mqtt-sparkplug-plus",
-  "version": "1.4.1",
+  "name": "node-red-mqtt-sparkplug-wrapper",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thomassorensen2650/node-red-contrib-mqtt-sparkplug-plus.git"
+    "url": "https://github.com/javier-fg/node-red-mqtt-sparkplug-wrapper"
   },
   "engines": {
     "node": ">=12.0.0"
   },
-  "description": "MQTT-Sparkplug-Plus is a set of Node-Red nodes, that will enable Node-Red to communicate with a MQTT Server using the sparkplug b protocol.",
+  "description": "mqtt-sparkplug-wrapper is a set of Node-Red nodes that will enable Node-Red to communicate with a MQTT Server using the Sparkplug B protocol.",
   "node-red": {
     "version": ">=2.0.0",
     "nodes": {
-      "mqtt-sparkplug-plus": "mqtt-sparkplug-plus.js"
+      "mqtt-sparkplug-wrapper": "mqtt-sparkplug-wrapper.js"
     }
   },
   "scripts": {
@@ -23,7 +23,7 @@
     "Sparkplug",
     "node-red"
   ],
-  "author": "Thomas Sørensen",
+  "author": "Javier FG",
   "license": "ISC",
   "dependencies": {
     "https-proxy-agent": "^5.0.0",

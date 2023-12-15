@@ -1,5 +1,5 @@
 var helper = require("node-red-node-test-helper");
-var sparkplugNode = require("../mqtt-sparkplug-plus.js");
+var sparkplugNode = require("../mqtt-sparkplug-wrapper.js");
 var should = require("should");
 var mqtt = require("mqtt");
 var pako = require('pako');
@@ -741,7 +741,7 @@ describe('mqtt sparkplug device node', function () {
 		
 			const n1 = helper.getNode("n1");
 			n1.on('input', () => {
-				n1.warn.should.be.calledWithExactly("mqtt-sparkplug-plus.errors.device-unknown-metric");
+				n1.warn.should.be.calledWithExactly("mqtt-sparkplug-wrapper.errors.device-unknown-metric");
 				done();
 			}); 
 			  n1.receive({
@@ -763,7 +763,7 @@ describe('mqtt sparkplug device node', function () {
 		
 			let n1 = helper.getNode("n1");
 			n1.on('input', () => {
-				n1.warn.should.be.calledWithExactly("mqtt-sparkplug-plus.errors.missing-attribute-name");
+				n1.warn.should.be.calledWithExactly("mqtt-sparkplug-wrapper.errors.missing-attribute-name");
 				done();
 			  });
 			n1.receive({
@@ -791,7 +791,7 @@ describe('mqtt sparkplug device node', function () {
 
 			n1.on('call:error', call => {
 				// XXX
-				call.firstArg.should.eql("mqtt-sparkplug-plus.errors.device-no-metrics")
+				call.firstArg.should.eql("mqtt-sparkplug-wrapper.errors.device-no-metrics")
 				done();
 			  });
 		}); // end helper
@@ -894,12 +894,12 @@ describe('mqtt sparkplug device node', function () {
 						b1 = n1.brokerConn;
 						n1.on('call:error', call => {
 							console.log("ERROR", call.firstArg);
-							call.firstArg.should.eql("mqtt-sparkplug-plus.errors.payload-type-object")
+							call.firstArg.should.eql("mqtt-sparkplug-wrapper.errors.payload-type-object")
 							done();
 						});
 						b1.on('call:error', call => {
 							console.log("ERROR1", call.firstArg);
-							call.firstArg.should.eql("mqtt-sparkplug-plus.errors.payload-type-object")
+							call.firstArg.should.eql("mqtt-sparkplug-wrapper.errors.payload-type-object")
 							done();
 						});
 			
@@ -1112,7 +1112,7 @@ describe('mqtt sparkplug device node', function () {
 						b1 = n1.brokerConn;
 
 						n1.on('call:warn', call => {
-							call.should.be.calledWithExactly('mqtt-sparkplug-plus.errors.unable-to-encode-message');
+							call.should.be.calledWithExactly('mqtt-sparkplug-wrapper.errors.unable-to-encode-message');
 							done();
 						  });
 
@@ -1120,7 +1120,7 @@ describe('mqtt sparkplug device node', function () {
 							
 							// FIXME: warn should be called, but its not! (works in node-red)
 							// need to fix test 
-							//n1.warn.should.be.calledWithExactly('mqtt-sparkplug-plus.errors.unable-to-encode-message');
+							//n1.warn.should.be.calledWithExactly('mqtt-sparkplug-wrapper.errors.unable-to-encode-message');
 							
 						});
 						// Send all metrics to trigger DBIRTH
@@ -1205,7 +1205,7 @@ describe('mqtt sparkplug device node', function () {
 						n1 = helper.getNode("n1");
 						n1.on('call:error', call => {
 							// XXX
-							call.firstArg.should.eql("mqtt-sparkplug-plus.errors.payload-type-object")
+							call.firstArg.should.eql("mqtt-sparkplug-wrapper.errors.payload-type-object")
 							done();
 						});
 						n1.receive({
@@ -1268,7 +1268,7 @@ describe('mqtt sparkplug device node', function () {
 
 						n1.on('call:error', call => {
 							//console.log(call);
-							call.should.be.calledWithExactly('mqtt-sparkplug-plus.errors.invalid-metric-definition');
+							call.should.be.calledWithExactly('mqtt-sparkplug-wrapper.errors.invalid-metric-definition');
 							done();
 						  });
 
@@ -1305,7 +1305,7 @@ describe('mqtt sparkplug device node', function () {
 						b1 = n1.brokerConn;
 
 						n1.on('call:error', call => {
-							call.should.be.calledWithExactly('mqtt-sparkplug-plus.errors.invalid-metric-definition');
+							call.should.be.calledWithExactly('mqtt-sparkplug-wrapper.errors.invalid-metric-definition');
 							done();
 						  });
 
@@ -1898,7 +1898,7 @@ describe('mqtt sparkplug in node', function () {
 				var n2 = helper.getNode("n2");
 				var n1 = helper.getNode("n1");
 				n1.on('call:error', call => {
-					call.should.be.calledWithExactly('mqtt-sparkplug-plus.errors.unable-to-decode-message');
+					call.should.be.calledWithExactly('mqtt-sparkplug-wrapper.errors.unable-to-decode-message');
 					done();
 				  });
 
