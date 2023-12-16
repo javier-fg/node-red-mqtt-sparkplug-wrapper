@@ -148,8 +148,6 @@ module.exports = function(RED) {
             this.birthImmediately = false;
         }
 
-        this.debug(`Value: ${this.isEond}`);
-
         this.brokerConn = RED.nodes.getNode(this.broker);
 
         /**
@@ -158,10 +156,14 @@ module.exports = function(RED) {
          */
         this.sendBirth = function(done) {
 
+            this.debug("Sending birth spb message");
+
             let readyToSend = Object.keys(this.metrics).every(m => this.latestMetrics.hasOwnProperty(m));
 
             // Don't send birth if no metrics. we can assume that a dynamic defintion will be send if on metrics are defined.
             let hasMetrics = Object.keys(this.metrics).length > 0;
+
+            // this.debug("Latest metrics:" + JSON.stringify(this.latestMetrics));
 
             if (readyToSend && hasMetrics) {
 
@@ -192,6 +194,8 @@ module.exports = function(RED) {
          */
         this.sendDeath = function(done) {
 
+            this.debug("Sending death spb message");
+
             if ( this.isEond ){
                 let dMsg = this.brokerConn.createMsg(this.spEond, "DDEATH", [], x=>{}, this.spGroup, this.spEon);
                 if(dMsg) {
@@ -213,82 +217,88 @@ module.exports = function(RED) {
             }
         }
 
+        // If broker connected - Process node input messages
         if (this.brokerConn) {
 
+            // ---  INPUT MESSAGES ---------------------------------------------------------
             this.on("input",function(msg,send,done) {
 
-                // Handle Command
-                if (msg.hasOwnProperty("command")) {
-                    if (msg.command.hasOwnProperty("device")) {
-                        if (msg.command.device.rebirth) {
-                            if (this.birthMessageSend) {
-                                this.sendDeath();    
-                            }
-                            this.sendBirth();
-                        }
-                        if (msg.command.device.death) {
+                this.log(`Node input msg: ${JSON.stringify(msg)}`);
+
+                // --- Custom NODE Commands ( msg.command ) ------------------------------------
+                if (msg.hasOwnProperty("command") && msg.command && typeof msg.command === 'string') {
+                    switch (msg.command){
+                        case "rebirth":     // rebirth - spb rebirth
                             if (this.birthMessageSend) {
                                 this.sendDeath();
                             }
-                        }
-                    };
-                }
+                            this.sendBirth();
+                            break;
 
-                let validPayload = msg.hasOwnProperty("payload") && typeof msg.payload === 'object' && msg.payload !== null && !Array.isArray(msg.payload);
-                
-                if (msg.hasOwnProperty("definition")) {
-                
-                    // Verify that all metric definitions are correct
-                    let definitionValid = typeof msg.definition === 'object' && msg.definition !== null && !Array.isArray(msg.definition);
-
-                    if (definitionValid) {
-
-                        for (const [key, value] of Object.entries(msg.definition)) {
-
-                            // Check name
-                            if (false) { // TODO: Is there any requirements for the metric name?
-                                this.error(`${key} is not a valid definition !!!`);
-                                definitionValid = false;
-                            }
-
-                            if (!value.hasOwnProperty("dataType")) {
-                                this.error(RED._("mqtt-sparkplug-wrapper.errors.invalid-metric-definition", { name : key, error: `datatype required` }));
-                                definitionValid = false;
-                            }else if (!node.dataTypes.includes(value.dataType)) {
-                                this.error(RED._("mqtt-sparkplug-wrapper.errors.invalid-metric-definition", { name : key, error: `Invalid datatype ${value.dataType}` }));
-                                definitionValid = false;
-                            }
-
-                        }
-                    }
-
-                    if (definitionValid) {
-
-                        this.metrics = msg.definition;
-
-                        // Filter metrics cache to only include metrics from new definition
-                        var newMetric = {}
-
-                        for (const [key, value] of Object.entries(this.latestMetrics)) {
-                            if (msg.definition.hasOwnProperty(key)) {
-                                newMetric[key] = value;
-                            }
-                        }
-                        this.latestMetrics = newMetric;
-
-                        if (this.birthMessageSend) {
-                            
+                        case "death":       // death - spb death
                             this.sendDeath();
-                            
-                            // if there are no payload, then see if we can send a new birth message with the latest 
-                            // data, otherwise we'll try to send after the values have been updated
-                            if (!validPayload) {
-                                this.sendBirth();
-                            }
-                        } 
+                            break;
                     }
                 }
-                    
+
+                // --- Sparkplug Messages processing
+                let validPayload = msg.hasOwnProperty("payload") && typeof msg.payload === 'object' && msg.payload !== null && !Array.isArray(msg.payload);
+
+                // NOTE sp device - msg.definition functionality disabled ( What is this used for? )
+                // if (msg.hasOwnProperty("definition")) {
+                //
+                //     // Verify that all metric definitions are correct
+                //     let definitionValid = typeof msg.definition === 'object' && msg.definition !== null && !Array.isArray(msg.definition);
+                //
+                //     if (definitionValid) {
+                //
+                //         for (const [key, value] of Object.entries(msg.definition)) {
+                //
+                //             // Check name
+                //             if (false) { // TODO: Is there any requirements for the metric name?
+                //                 this.error(`${key} is not a valid definition !!!`);
+                //                 definitionValid = false;
+                //             }
+                //
+                //             if (!value.hasOwnProperty("dataType")) {
+                //                 this.error(RED._("mqtt-sparkplug-wrapper.errors.invalid-metric-definition", { name : key, error: `datatype required` }));
+                //                 definitionValid = false;
+                //             }else if (!node.dataTypes.includes(value.dataType)) {
+                //                 this.error(RED._("mqtt-sparkplug-wrapper.errors.invalid-metric-definition", { name : key, error: `Invalid datatype ${value.dataType}` }));
+                //                 definitionValid = false;
+                //             }
+                //
+                //         }
+                //     }
+                //
+                //     if (definitionValid) {
+                //
+                //         this.metrics = msg.definition;
+                //
+                //         // Filter metrics cache to only include metrics from new definition
+                //         var newMetric = {}
+                //
+                //         for (const [key, value] of Object.entries(this.latestMetrics)) {
+                //             if (msg.definition.hasOwnProperty(key)) {
+                //                 newMetric[key] = value;
+                //             }
+                //         }
+                //         this.latestMetrics = newMetric;
+                //
+                //         if (this.birthMessageSend) {
+                //
+                //             this.sendDeath();
+                //
+                //             // if there are no payload, then see if we can send a new birth message with the latest
+                //             // data, otherwise we'll try to send after the values have been updated
+                //             if (!validPayload) {
+                //                 this.sendBirth();
+                //             }
+                //         }
+                //     }
+                // }
+
+                // If valid sparkplug payload - process the data
                 if (validPayload) {
                  
                     if (msg.payload.hasOwnProperty("metrics") && Array.isArray(msg.payload.metrics)) {
@@ -341,7 +351,7 @@ module.exports = function(RED) {
 
                         }else if (_metrics.length > 0) {
 
-                            // Send DBIRTH
+                            // if send DBIRTH inmediately
                             if (!this.birthMessageSend)
                                 this.sendBirth(done);
 
@@ -366,16 +376,15 @@ module.exports = function(RED) {
                 }
             }); // end input
 
-            //  Create "NULL" metrics if metrics should be sendt immediately
-            if (this.birthImmediately) {
-                this.latestMetrics = {};
-                Object.keys(this.metrics).forEach(m => {
-                    this.latestMetrics[m] = { value : null, name : m, type: this.metrics[m].dataType }
-                });
-            }
+            // Initialize the last metrics
+            this.latestMetrics = {};
+            Object.keys(this.metrics).forEach(m => {
+                this.latestMetrics[m] = { value : null, name : m, type: this.metrics[m].dataType }
+            });
 
-            node.brokerConn.register(node);
-            
+            // Register the broker connection node
+            this.brokerConn.register(node);
+
             // Handle DCMD Messages
             let options = { qos: 0 };
             if ( this.isEond )
@@ -383,39 +392,37 @@ module.exports = function(RED) {
             else
                 var subscribeTopic = `spBv1.0/${this.spGroup}/NCMD/${this.spEon}`;
 
+            this.debug(`Node subscribed to mqtt topic: ${subscribeTopic}`);
+
             this.brokerConn.subscribe(subscribeTopic,options,function(topic_,payload_,packet) {
                 
                 try {
                     var payload = maybeDecompressPayload(sparkplugDecode(payload_));
                     var topic = topic_;
-                    
+
+                    // node.debug(`Data received in topic: ${subscribeTopic}`);
+
                     // Check for the REBIRTH CMD
                     if (payload.hasOwnProperty("metrics") && Array.isArray(payload.metrics)){
+
+                        // Check for the REBIRTH cmd
                         payload.metrics.forEach(m => {
                             if (typeof m === 'object' && m.hasOwnProperty("name") && m.name) {
                                 if (m.name.toLowerCase() === "node control/rebirth") {
-
-                                    let bMsg = this.getDeathPayload();
-                                    if(bMsg) {
-                                        node.publish(bMsg, !this.shouldBuffer, f => {});  // send the message 
+                                    if (node.birthMessageSend) {
+                                        node.sendDeath();
                                     }
-
                                     node.sendBirth();
-                                }else
-                                {
-                                    node.warn(`NCMD command ${m.name} is not supported`);
                                 }
-                            }else {
-                                node.warn(`invalid NCMD received`);
                             }
                         })
+
+                        // Send the message to the node output
+                        node.send({ topic : topic, payload : payload });
                     }
-                    
-                    // Send the message to the node output
-                    node.send({ topic : topic, payload : payload });
 
                 } catch (e) {
-                    node.error(RED._("mqtt-sparkplug-wrapper.errors.unable-to-decode-message", {type : "DCMD", error: e.toString()}));
+                    node.error(RED._("mqtt-sparkplug-wrapper.errors.unable-to-decode-message", {type : "CMD", error: e.toString()}));
                 }
 
             });
@@ -760,7 +767,6 @@ module.exports = function(RED) {
          * @param {object} mqttNode 
          */
         this.register = function(mqttNode) {
-            
             node.users[mqttNode.id] = mqttNode;
             let state = node.connected ? "CONNECTED" : "DISCONNECTED";
             node.setConnectionState(mqttNode, state);
@@ -817,10 +823,19 @@ module.exports = function(RED) {
 
                         node.log(RED._("mqtt-sparkplug-wrapper.state.connected",{broker:(node.clientid?node.clientid+"@":"")+node.brokerurl}));
 
+                        // For each node attached
                         for (var id in node.users) {
+
+                            // Update status of attached broker users
                             if (node.users.hasOwnProperty(id)) {
                                 let state = node.enableStoreForward && node.primaryScadaStatus === "OFFLINE"  && node.users[id].shouldBuffer === true ? "BUFFERING" : "CONNECTED";
                                 node.setConnectionState(node.users[id], state);
+
+                                // If Birth message inmediately
+                                if(node.users[id].hasOwnProperty("birthImmediately") && node.users[id].birthImmediately){
+                                    node.log("BIRTHHHHHHH");
+                                    node.users[id].sendBirth(f => {});
+                                }
                             }
                         }
 
@@ -1264,4 +1279,191 @@ module.exports = function(RED) {
         }
     }
     RED.nodes.registerType("sparkplug out",MQTTSparkplugNodeOut);
+
+
+    function MQTTSparkplugDeviceListenerNode(n) {
+
+        RED.nodes.createNode(this,n);
+
+        var node = this;
+
+        this.dataTypes = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"],
+            this.broker = n.broker;
+        this.name = n.name;
+        this.spEond = n.spEond||"sp-eond",
+        this.spEon = n.spEon||"sp-eon",
+        this.spGroup = n.spGroup||"sp-group";
+        this.isEond = n.isEond;
+        this.latestMetricsData = {};
+        this.metricsData = n.metricsData || {};
+        this.latestMetricsCmd = {};
+        this.metricsCmd = n.metricsCmd || {};
+        this.birthMessageSend = false;
+        this.birthImmediately = n.birthImmediately || false;
+        this.parseBirthData = n.parseBirthData || false;
+        this.parseCommandData = n.parseCommandData || false;
+
+        this.shouldBuffer = true; // hardcoded / Devices always buffers
+
+        if (typeof this.birthImmediately === 'undefined') {
+            this.birthImmediately = false;
+        }
+
+        this.brokerConn = RED.nodes.getNode(this.broker);
+
+        if (this.brokerConn) {
+
+            // Send Commands
+            this.on("input",function(msg,send,done) {
+
+                // this.debug(`Msg value: ${msg.payload}, Type:, ${typeof msg.payload}`);
+
+                // Check if the payload is correct type
+                if ( msg.hasOwnProperty("payload") && (typeof msg.payload === 'number' || typeof msg.payload === 'string' || typeof msg.payload === 'boolean' )){
+
+                    if ( msg.hasOwnProperty("topic") && typeof msg.topic === 'string'){
+
+                        var _cmd = msg['topic'];  // Get command name
+
+                        // Check if the cmd exists in our list
+                        if( this.metricsCmd.hasOwnProperty(_cmd)){
+
+                            var _metrics = [];
+
+                            // Get the metric and update the value from payload content.
+                            var _m = { "type" : this.metricsCmd[_cmd]["dataType"], "value": msg.payload, "name": _cmd};
+                            _metrics.push(_m);
+
+                            // this.log(JSON.stringify(_metrics, null, 2));
+
+                            // Send CMD if broker is connected, otherwise data will be lost.
+                            if (this.brokerConn.connected) {
+
+                                // SEND spb DATA msg
+                                var msgType = this.isEond ? "DCMD" : "NCMD";
+                                let dMsg = this.brokerConn.createMsg(this.spEond, msgType, _metrics, f => {}, this.spGroup, this.spEon);
+                                if (dMsg) {
+                                    this.brokerConn.publish(dMsg, !this.shouldBuffer, done);
+                                }
+                            }
+
+                            // Finish msg processing
+                            done();
+
+                        }else{
+                            // Missing command name
+                            node.error(RED._("mqtt-sparkplug-wrapper.errors.unknown-cmd-name"));
+                            done();
+                        }
+
+                    }else{
+                        // Missing command name
+                        node.error("Missing comand name, set it at < msg.topic > ");
+                        done();
+                    }
+
+                }else{
+                    // Invalid payload format
+                    node.error(RED._("mqtt-sparkplug-wrapper.errors.payload-cmd-type-wrong"));
+                    done();
+                }
+
+            }); // end input
+
+            //  Create "NULL" metrics if metrics should be sendt immediately
+            if (this.birthImmediately) {
+                this.latestMetrics = {};
+                Object.keys(this.metrics).forEach(m => {
+                    this.latestMetrics[m] = { value : null, name : m, type: this.metrics[m].dataType }
+                });
+            }
+
+            node.brokerConn.register(node);
+
+            // Handle DATA / BIRTH Messages - To parse their data and send it to the different outputs.
+            let options = { qos: 0 };
+
+            // Message filter to parse the spb message based on topic
+            this.spMsgTypesFilter = ["DATA"];
+            if(this.parseBirthData)  this.spMsgTypesFilter.push("BIRTH");
+            if(this.parseCommandData)  this.spMsgTypesFilter.push("CMD");
+
+            if ( this.isEond )
+                var subscribeTopic = `spBv1.0/${this.spGroup}/+/${this.spEon}/${this.spEond}`;
+            else
+                var subscribeTopic = `spBv1.0/${this.spGroup}/+/${this.spEon}`;
+
+            this.debug(`Node subscribed to mqtt topic: ${subscribeTopic}, msg filters: ${this.spMsgTypesFilter}`);
+
+            this.brokerConn.subscribe(subscribeTopic,options,function(topic_,payload_,packet) {
+
+                try {
+                    var payload = maybeDecompressPayload(sparkplugDecode(payload_));
+                    var topic = topic_;
+
+                    // node.debug(`Data received on topic: ${topic}`);
+
+                    // Check msg type and if we need to parse it.
+                    let msgType = topic.split('/')[2].substring(1);  // Get message type without first character
+
+                    if (msgType && node.spMsgTypesFilter.includes(msgType)) {
+
+                        // Check if the payload has correct format.
+                        if (payload.hasOwnProperty("metrics") && Array.isArray(payload.metrics)){
+
+                            var _validMessages = {};     // Valid message metrics
+
+                            // Iterate over the message metrics.
+                            // Check if the message metrics matches the user metrics, if so add them to _validMessages
+                            payload.metrics.forEach(m => {
+
+                                if (typeof m === 'object' && m.hasOwnProperty("name") && m.name) {
+
+                                    // If part of user metrics, add it to the list.
+                                    if( node.metricsData.hasOwnProperty(m.name)){
+
+                                        // Check if the value is valid
+                                        if(m.value)
+                                            _validMessages[m.name] = { "payload": m.value, "topic": m.name, "type": m.type};
+                                    }
+                                }
+                            })
+
+                            // node.log(JSON.stringify(_validMessages, null, 2));
+
+                            // Generate the output messages
+                            if(_validMessages){
+
+                                var _messages = [];     // Node output messages
+
+                                // Iterate over the metricsData that corresponds also to the node outputs.
+                                for (let key in node.metricsData) {
+                                    if( _validMessages.hasOwnProperty(key) )
+                                        _messages.push(_validMessages[key]); // Push the message.
+                                    else
+                                        _messages.push(null);  // No message
+                                }
+
+                                // node.log(JSON.stringify(_messages, null, 2));
+
+                                node.send(_messages);   // Send the parse metrics messages to the different outputs.
+                            }
+                        }
+                    }
+                } catch (e) {
+                    node.error(RED._("mqtt-sparkplug-wrapper.errors.unable-to-decode-message", {type : "DCMD", error: e.toString()}));
+                }
+
+            });
+
+            this.on('close', function(done) {
+                node.brokerConn.deregister(node, done);
+            });
+
+        } else {
+            this.error(RED._("mqtt-sparkplug-wrapper.errors.missing-config"));
+        }
+    }
+    RED.nodes.registerType("sparkplug device listener",MQTTSparkplugDeviceListenerNode);
+
 };

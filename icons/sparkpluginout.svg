@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   preserveAspectRatio="xMidYMid meet"
+   viewBox="15 0 400 600"
+   width="400"
+   height="600"
+   id="svg110"
+   sodipodi:docname="sparkpluginout.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview112"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.7116667"
+     inkscape:cx="-278.09153"
+     inkscape:cy="101.94742"
+     inkscape:window-width="2560"
+     inkscape:window-height="1361"
+     inkscape:window-x="2551"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g108" />
+  <defs
+     id="defs64">
+    <path
+       d="M218.04 245.42L191.97 342.05L246.04 342.05L81.89 531.2L112.79 412.98L57.75 412.98L76.1 342.05L22.02 340L49.06 245.42L218.04 245.42Z"
+       id="b3DH19HER4" />
+    <path
+       d="M220.94 215.71L49.06 215.71"
+       id="hZRQwbQh2" />
+    <path
+       d="M219.01 188.19L49.06 188.19"
+       id="aQspnrvdt" />
+    <path
+       d="M176.22 106.55L107 106.55L107 174.15"
+       id="bwOpsqcF" />
+    <path
+       d="M168.8 174.15C168.8 168.75 168.8 157.96 168.8 141.77L135 141.77L135 174.15"
+       id="b53IXarGrM" />
+    <path
+       d="M380.72 310.25L287.59 489.86L285.09 179.69L380.72 310.25Z"
+       id="b3P5DHVBkr" />
+  </defs>
+  <g
+     id="g108"
+     transform="translate(-408.3739,-49.074976)">
+    <g
+       id="g549"
+       transform="translate(486.07595,25.70594)">
+      <g
+         id="g72">
+        <use
+           xlink:href="#b3DH19HER4"
+           opacity="1"
+           fill="#ffffff"
+           fill-opacity="1"
+           id="use66" />
+        <g
+           id="g70">
+          <use
+             xlink:href="#b3DH19HER4"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#ffffff"
+             stroke-width="20"
+             stroke-opacity="1"
+             id="use68" />
+        </g>
+      </g>
+      <g
+         id="g78">
+        <g
+           id="g76">
+          <use
+             xlink:href="#hZRQwbQh2"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#ffffff"
+             stroke-width="20"
+             stroke-opacity="1"
+             id="use74" />
+        </g>
+      </g>
+      <g
+         id="g84">
+        <g
+           id="g82">
+          <use
+             xlink:href="#aQspnrvdt"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#ffffff"
+             stroke-width="20"
+             stroke-opacity="1"
+             id="use80" />
+        </g>
+      </g>
+      <g
+         id="g90">
+        <g
+           id="g88">
+          <use
+             xlink:href="#bwOpsqcF"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#ffffff"
+             stroke-width="20"
+             stroke-opacity="1"
+             id="use86" />
+        </g>
+      </g>
+      <g
+         id="g96">
+        <g
+           id="g94">
+          <use
+             xlink:href="#b53IXarGrM"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#ffffff"
+             stroke-width="20"
+             stroke-opacity="1"
+             id="use92" />
+        </g>
+      </g>
+      <g
+         id="g104">
+        <use
+           xlink:href="#b3P5DHVBkr"
+           opacity="1"
+           fill="#ffffff"
+           fill-opacity="1"
+           id="use98" />
+        <g
+           id="g102">
+          <use
+             xlink:href="#b3P5DHVBkr"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#ffffff"
+             stroke-width="20"
+             stroke-opacity="1"
+             id="use100" />
+        </g>
+      </g>
+      <g
+         id="g104-8"
+         transform="translate(-394.975,6.8743597)">
+        <use
+           xlink:href="#b3P5DHVBkr"
+           opacity="1"
+           fill="#ffffff"
+           fill-opacity="1"
+           id="use98-2" />
+        <g
+           id="g102-5">
+          <use
+             xlink:href="#b3P5DHVBkr"
+             opacity="1"
+             fill-opacity="0"
+             stroke="#ffffff"
+             stroke-width="20"
+             stroke-opacity="1"
+             id="use100-6" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

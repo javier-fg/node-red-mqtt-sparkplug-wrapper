@@ -1,0 +1,569 @@
+[
+    {
+        "id": "4c729cf49dda3106",
+        "type": "tab",
+        "label": "Node Testing",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "4599567362488f33",
+        "type": "debug",
+        "z": "4c729cf49dda3106",
+        "name": "MQTT",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "2bac6ee5535805cf",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "payload - POW",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"metrics\":[{\"name\":\"POW\",\"value\":12}]}",
+        "payloadType": "json",
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "29bfd066ac7864a7"
+            ]
+        ]
+    },
+    {
+        "id": "b3c853193f214d9b",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "test - wrong metric name",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"metrics\":[{\"name\":\"JAVI\",\"value\":123}]}",
+        "payloadType": "json",
+        "x": 450,
+        "y": 200,
+        "wires": [
+            [
+                "94b3f7a8fbd9e596"
+            ]
+        ]
+    },
+    {
+        "id": "ec89353ab3fb6880",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "Send CMD + REBIRTH",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"metrics\":[{\"name\":\"Node Control/RebirthX\",\"value\":true,\"type\":\"Boolean\"},{\"name\":\"CMD\",\"value\":true,\"type\":\"Boolean\"}]}",
+        "payloadType": "json",
+        "x": 440,
+        "y": 400,
+        "wires": [
+            [
+                "270f00ec36483330"
+            ]
+        ]
+    },
+    {
+        "id": "15b7485a52a58ac2",
+        "type": "debug",
+        "z": "4c729cf49dda3106",
+        "name": "Device CMD",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 970,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "94b3f7a8fbd9e596",
+        "type": "sparkplug device",
+        "z": "4c729cf49dda3106",
+        "name": "Device",
+        "spEond": "device",
+        "spEon": "edge",
+        "spGroup": "wrapper",
+        "isEond": true,
+        "metrics": {
+            "ENAME": {
+                "dataType": "String",
+                "name": "ENAME"
+            },
+            "POW": {
+                "dataType": "Int32",
+                "name": "POW"
+            },
+            "CMD": {
+                "dataType": "Boolean",
+                "name": "CMD"
+            }
+        },
+        "broker": "7cf69d32c376420f",
+        "birthImmediately": false,
+        "x": 770,
+        "y": 200,
+        "wires": [
+            [
+                "15b7485a52a58ac2"
+            ]
+        ]
+    },
+    {
+        "id": "a58ff7973117f546",
+        "type": "sparkplug in",
+        "z": "4c729cf49dda3106",
+        "name": "",
+        "topic": "spBv1.0/wrapper/#",
+        "qos": "2",
+        "broker": "7cf69d32c376420f",
+        "x": 810,
+        "y": 500,
+        "wires": [
+            [
+                "4599567362488f33"
+            ]
+        ]
+    },
+    {
+        "id": "270f00ec36483330",
+        "type": "sparkplug out",
+        "z": "4c729cf49dda3106",
+        "name": "",
+        "topic": "spBv1.0/wrapper/DCMD/edge/device",
+        "qos": "",
+        "retain": "",
+        "broker": "7cf69d32c376420f",
+        "x": 750,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "785d2cc4fae2bc15",
+        "type": "sparkplug device listener",
+        "z": "4c729cf49dda3106",
+        "name": "TestListener",
+        "spEond": "device",
+        "spEon": "edge",
+        "spGroup": "wrapper",
+        "isEond": true,
+        "metricsData": {
+            "POW": {
+                "dataType": "Int32"
+            },
+            "CMD": {
+                "dataType": "Int32"
+            },
+            "ENAME": {
+                "dataType": "Int32"
+            },
+            "NotUsed": {
+                "dataType": "Int32"
+            }
+        },
+        "metricsCmd": {
+            "CMD": {
+                "dataType": "Int8"
+            },
+            "Node Control/Rebirth": {
+                "dataType": "Int32"
+            },
+            "POW": {
+                "dataType": "Int32"
+            }
+        },
+        "broker": "7cf69d32c376420f",
+        "birthImmediately": false,
+        "parseBirthData": true,
+        "parseCommandData": true,
+        "outputs": 4,
+        "x": 750,
+        "y": 660,
+        "wires": [
+            [
+                "2d6024670f98aa82"
+            ],
+            [
+                "522ea7799b7efd1b"
+            ],
+            [
+                "9011cde5f0b333cf"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "ffb88240d81fac53",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "command - CMD",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "CMD",
+        "payload": "11234",
+        "payloadType": "num",
+        "x": 420,
+        "y": 620,
+        "wires": [
+            [
+                "785d2cc4fae2bc15"
+            ]
+        ]
+    },
+    {
+        "id": "2d6024670f98aa82",
+        "type": "debug",
+        "z": "4c729cf49dda3106",
+        "name": "POW",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "6956acacd688ee6a",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "command - somethingelse",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "somethingelse",
+        "payload": "\"Hola\"",
+        "payloadType": "str",
+        "x": 450,
+        "y": 660,
+        "wires": [
+            [
+                "785d2cc4fae2bc15"
+            ]
+        ]
+    },
+    {
+        "id": "d6ff5e9fd0e8875f",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "test - no CMD specified",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 440,
+        "y": 720,
+        "wires": [
+            [
+                "785d2cc4fae2bc15"
+            ]
+        ]
+    },
+    {
+        "id": "a7e177962dfa8f97",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "test - Object type",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"value\":111}",
+        "payloadType": "json",
+        "x": 420,
+        "y": 760,
+        "wires": [
+            [
+                "785d2cc4fae2bc15"
+            ]
+        ]
+    },
+    {
+        "id": "522ea7799b7efd1b",
+        "type": "debug",
+        "z": "4c729cf49dda3106",
+        "name": "CMD",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "9011cde5f0b333cf",
+        "type": "debug",
+        "z": "4c729cf49dda3106",
+        "name": "ENAME",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "88ed6aad0847cb1a",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "command - Node Control/Rebirth",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Node Control/Rebirth",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 470,
+        "y": 580,
+        "wires": [
+            [
+                "785d2cc4fae2bc15"
+            ]
+        ]
+    },
+    {
+        "id": "29bfd066ac7864a7",
+        "type": "function",
+        "z": "4c729cf49dda3106",
+        "name": "Increment",
+        "func": "var count=context.get('count') || 0;\ncount +=1;\nmsg.payload.metrics[0].value += count;\ncontext.set('count',count);\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 120,
+        "wires": [
+            [
+                "94b3f7a8fbd9e596"
+            ]
+        ]
+    },
+    {
+        "id": "354846de21a3b18e",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "payload - ENAME",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"metrics\":[{\"name\":\"ENAME\",\"value\":\"Entity Name Device\"}]}",
+        "payloadType": "json",
+        "x": 430,
+        "y": 80,
+        "wires": [
+            [
+                "94b3f7a8fbd9e596"
+            ]
+        ]
+    },
+    {
+        "id": "f61fdf92e15da7d8",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "payload - Somethingelse",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"metrics\":[{\"name\":\"Somethingelse\",\"value\":\"Something\"}]}",
+        "payloadType": "json",
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "94b3f7a8fbd9e596"
+            ]
+        ]
+    },
+    {
+        "id": "2e5f70d46142194c",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "node cmd - death",
+        "props": [
+            {
+                "p": "command",
+                "v": "death",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 420,
+        "y": 300,
+        "wires": [
+            [
+                "94b3f7a8fbd9e596"
+            ]
+        ]
+    },
+    {
+        "id": "787597e3784a32df",
+        "type": "inject",
+        "z": "4c729cf49dda3106",
+        "name": "node cmd - rebirth",
+        "props": [
+            {
+                "p": "command",
+                "v": "rebirth",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 430,
+        "y": 260,
+        "wires": [
+            [
+                "94b3f7a8fbd9e596"
+            ]
+        ]
+    },
+    {
+        "id": "482ee3fe8d83867c",
+        "type": "comment",
+        "z": "4c729cf49dda3106",
+        "name": "README",
+        "info": "# Node Testing - Example\n\nIn this flow you will be able to test and see the different functionalities of the different nodes of the *mqtt sparkplug wrapper* library.\n\nThe flow contains the following sections:\n\n- **sparkplug device** - This section shows how to create a virtual sparkplug device within node-red. You can see how you can send device metrics, force to send birth and death sparkplug  messages and also how to receive commands that are addressed to the device.\n- **sparkplug out** - This section shows how you can send a sparkplug message to any topic in sparkplug broker. In this case is a command message.\n- **sparkplug in** - This section shows you how you can received sparkplug messages on specific topics, in this case all the topics in the group.\n- **sparkplug device listener** - This section shows you how you can create a virtual sparkplug listener node that will parse automatically data metrics (previously configured) as well as to send commands.\n\n### Requirements\n\nYou will need to have an MQTT broker located at localhost:1883, otherwise you will need to update the server configuration.\n\n",
+        "x": 760,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "7cf69d32c376420f",
+        "type": "mqtt-sparkplug-broker",
+        "name": "localhost",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "enableStoreForward": false,
+        "compressAlgorithm": "",
+        "aliasMetrics": false,
+        "primaryScada": "aaa"
+    }
+]

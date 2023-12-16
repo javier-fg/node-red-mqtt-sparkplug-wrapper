@@ -590,5 +590,299 @@ RED.nodes.registerType('sparkplug out',{
         return this.name?"node_label_italic":"";
     }
 });
+</script>
 
+
+
+<!-- Sparkplug device listener -->
+<script type="text/html" data-template-name="sparkplug device listener">
+
+    <div class="form-row">
+        <label for="node-input-name"><span data-i18n="mqtt-sparkplug-wrapper.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]mqtt-sparkplug-wrapper.placeholder.name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-broker"><i class="fa fa-globe"></i> <span data-i18n="mqtt-sparkplug-wrapper.label.broker"></span></label>
+        <input type="text" id="node-input-broker">
+    </div>
+
+    <div class="form-row">
+        <ul style="min-width: 600px; margin-bottom: 20px;" id="node-mqtt-device-tabs"></ul>
+    </div>
+
+    <div id="node-mqtt-device-tabs-content" style="min-height:150px;">
+
+        <div id="mqtt-device-tab-metrics-data" style="display:none">
+            <label for="node-input-parseBirthData" style="width:70%">
+                <input type="checkbox" id="node-input-parseBirthData" style="display:inline-block; width:22px; vertical-align:top;"><span data-i18n="mqtt-sparkplug-wrapper.label.parseBirthData"></span>
+            </label>
+            <label for="node-input-parseCommandData" style="width:70%">
+                <input type="checkbox" id="node-input-parseCommandData" style="display:inline-block; width:22px; vertical-align:top;"><span data-i18n="mqtt-sparkplug-wrapper.label.parseCommandData"></span>
+            </label>
+            <div class="form-row sparkplug-input-metric-row" id="sparkplug-input-metric-container-row">
+                <ol id="sparkplug-input-metric-data-container"></ol>
+            </div>
+        </div>
+
+        <div id="mqtt-device-tab-metrics-cmd" style="display:none">
+            <div class="form-row sparkplug-input-metric-row" id="sparkplug-input-metric-container-row">
+                <ol id="sparkplug-input-metric-cmd-container"></ol>
+            </div>
+            <div class="form-tips"><span data-i18n="mqtt-sparkplug-wrapper.tip.device"></span></div>
+        </div>
+
+        <div id="mqtt-device-tab-advanced" style="display:none">
+
+            <div class="form-row">
+                <label for="node-input-broker"><span data-i18n="mqtt-sparkplug-wrapper.label.nodetype"></span></label>
+                <span class="button-group">
+                    <button type="button" data-value="eond" class="red-ui-button toggle device-type-button-group selected">Device (EoND)</button>
+                    <button type="button" data-value="eon" class="red-ui-button toggle device-type-button-group">Node (EoN)</button>
+                </span>
+            </div>
+            <div class="form-row">
+                <label for="node-input-spEond"><i class="fa fa-tasks"></i> <span data-i18n="mqtt-sparkplug-wrapper.label.eond"></span></label>
+                <input type="text" id="node-input-spEond" data-i18n="[placeholder]mqtt-sparkplug-wrapper.placeholder.eondname">
+            </div>
+            <div class="form-row">
+                <label for="node-input-spEon"><i class="fa fa-tasks"></i> <span data-i18n="mqtt-sparkplug-wrapper.label.eon"></span></label>
+                <input type="text" id="node-input-spEon" data-i18n="[placeholder]mqtt-sparkplug-wrapper.placeholder.eonname">
+            </div>
+            <div class="form-row">
+                <label for="node-input-spGroup"><i class="fa fa-tasks"></i> <span data-i18n="mqtt-sparkplug-wrapper.label.group"></span></label>
+                <input type="text" id="node-input-spGroup" data-i18n="[placeholder]mqtt-sparkplug-wrapper.placeholder.groupname">
+            </div>
+            <!-- UI for birthImmediately-->
+            <div class="form-row">
+                <label for="node-input-birthImmediately" style="width:70%">
+                    <input type="checkbox" id="node-input-birthImmediately" style="display:inline-block; width:22px; vertical-align:top;"><span data-i18n="mqtt-sparkplug-wrapper.label.birthImmediately"></span>
+                </label>
+            </div>
+            <div class="form-tips"><span data-i18n="mqtt-sparkplug-wrapper.tip.birthImmediately"></span></div>
+
+        </div>
+
+    </div>
+</script>
+
+<script type="text/javascript">
+    (function() {
+
+        /**
+         * Function that returns a list of configured Data Metrics
+         * @return   {Object} A object with all configured metrics.
+         */
+        function getMetricsListData() {
+            var _metrics = {};
+            var metrics = $("#sparkplug-input-metric-data-container").editableList("items");
+            metrics.each(function(i) {
+                var item = $(this);
+                var name = item.find(".sparkplug-input-metric-name").val();
+                var dt = item.find(".sparkplug-input-metric-dateType option:selected").text();
+
+                if (name) {
+                    _metrics[name] = { dataType : dt};
+                }
+            });
+            return _metrics;
+        }
+
+        /**
+         * Function that returns a list of configured Comand Metrics
+         * @return   {Object} A object with all configured metrics.
+         */
+        function getMetricsListCmd() {
+            var _metrics = {};
+            var metrics = $("#sparkplug-input-metric-cmd-container").editableList("items");
+            metrics.each(function(i) {
+                var item = $(this);
+                var name = item.find(".sparkplug-input-metric-name").val();
+                var dt = item.find(".sparkplug-input-metric-dateType option:selected").text();
+
+                if (name) {
+                    _metrics[name] = { dataType : dt};
+                }
+            });
+            return _metrics;
+        }
+
+        RED.nodes.registerType('sparkplug device listener',{
+            category: 'network',
+            defaults: {
+                name: {value:""},
+                spEond: {value:"",  validate :x => /^[^/+#]*$/.test(x)},
+                spEon: {value:"",  validate :x => /^[^/+#]*$/.test(x)},
+                spGroup: {value:"",  validate :x => /^[^/+#]*$/.test(x)},
+                isEond: {value:true},
+                metricsData: {value:{}, required:true, /*validate : x => Object.keys(x).length > 0*/ }, // do regex matching of invalid charaters (e.g. # or +)
+                metricsCmd: {value:{}, required:true, /*validate : x => Object.keys(x).length > 0*/ }, // do regex matching of invalid charaters (e.g. # or +)
+                broker: {type:"mqtt-sparkplug-broker", required:true},
+                birthImmediately: {value: false},
+                parseBirthData: {value: false},
+                parseCommandData: {value: false},
+                outputs: {value:1}, // To dynamically increase the number of outputs
+            },
+            color:"#2181a6",
+            inputs: 1,
+            inputLabels: "Input CMDs",
+            outputs: 1,
+            outputLabels: function(index){
+                var dataName = Object.keys(this.metricsData)[index];
+                if(dataName){
+                    return "Data metric - " + dataName;
+                }
+            },
+            icon: "sparkpluginout.svg",
+            align: "right",
+            label: function() {
+                return this.name||"Sparkplug Device Listener";
+            },
+            oneditprepare: function() {
+                var that = this;
+
+                var tabs = RED.tabs.create({
+                    id: "node-mqtt-device-tabs",
+                    onchange: function(tab) {
+                        $("#node-mqtt-device-tabs-content").children().hide();
+                        $("#" + tab.id).show();
+                    }
+                });
+
+                tabs.addTab({
+                    id: "mqtt-device-tab-metrics-data",
+                    label: this._("mqtt-sparkplug-wrapper.tabs-label.metrics-data"),
+                    iconClass: "fa fa-cubes",
+                });
+                tabs.addTab({
+                    id: "mqtt-device-tab-metrics-cmd",
+                    label: this._("mqtt-sparkplug-wrapper.tabs-label.metrics-cmd"),
+                    iconClass: "fa fa-cubes",
+                });
+                tabs.addTab({
+                    id: "mqtt-device-tab-advanced",
+                    label: this._("mqtt-sparkplug-wrapper.tabs-label.sparkplugNode"),
+                    iconClass: "fa fa-cog"
+                });
+
+                // Command Metric list - Setup model
+                var metricsCmdList = $("#sparkplug-input-metric-cmd-container").editableList( {
+                    header: $("<div>").append($.parseHTML("<div style='width:80%; display: inline-grid'>Name</div><div style='display: inline-grid'>Type</div>")),
+                    addButton: "add",
+                    removable: true,
+                    height: 300,
+                    addItem: function(container,i,opt) {
+                        var parent = container.parent();
+                        var row = $("<div/>").addClass("sparkplug-input-metric").appendTo(container);
+                        var fmoduleSpan = $("<span>").appendTo(row);
+                        var fmodule = $("<input/>", {
+                            class: "sparkplug-input-metric-name",
+                            placeholder: "Metric Name",
+                            type: "text"
+                        }).css({
+                        }).appendTo(fmoduleSpan).val(opt.name);
+
+                        var selectField = $('<select/>',{
+                            style:"width:110px; margin-left: 5px; text-align: center;",
+                            class : "sparkplug-input-metric-dateType"
+                        }).appendTo(row);
+                        var group0 = $('<optgroup/>', { label: "Datatypes" }).appendTo(selectField);
+
+                        var dt = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"];
+                        dt.forEach(d => {
+                            let option = $("<option></option>").val(d).text(d);
+                            group0.append(option);
+                            if (d === opt.dataType || (Object.keys(opt).length === 0 && d === "Int32")) {
+                                option.attr('selected','selected')
+                            }
+                        });
+                    }
+                });
+                var metricsCmd = this.metricsCmd || {};
+                for (const [key, value] of Object.entries(metricsCmd)) {
+                    value["name"] = key;
+                    metricsCmdList.editableList('addItem', value)
+                };
+
+                // Data Metric list - Setup model
+                var metricsListData = $("#sparkplug-input-metric-data-container").editableList( {
+                    header: $("<div>").append($.parseHTML("<div style='width:80%; display: inline-grid'>Name</div><div style='display: inline-grid'>Type</div>")),
+                    addButton: "add",
+                    removable: true,
+                    height: 300,
+                    addItem: function(container,i,opt) {
+                        var parent = container.parent();
+                        var row = $("<div/>").addClass("sparkplug-input-metric").appendTo(container);
+                        var fmoduleSpan = $("<span>").appendTo(row);
+                        var fmodule = $("<input/>", {
+                            class: "sparkplug-input-metric-name",
+                            placeholder: "Metric Name",
+                            type: "text"
+                        }).css({
+                        }).appendTo(fmoduleSpan).val(opt.name);
+
+                        var selectField = $('<select/>',{
+                            style:"width:110px; margin-left: 5px; text-align: center;",
+                            class : "sparkplug-input-metric-dateType"
+                        }).appendTo(row);
+                        var group0 = $('<optgroup/>', { label: "Datatypes" }).appendTo(selectField);
+
+                        var dt = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"];
+                        dt.forEach(d => {
+                            let option = $("<option></option>").val(d).text(d);
+                            group0.append(option);
+                            if (d === opt.dataType || (Object.keys(opt).length === 0 && d === "Int32")) {
+                                option.attr('selected','selected')
+                            }
+                        });
+                    }
+                });
+                var metricsData = this.metricsData || {};
+                for (const [key, value] of Object.entries(metricsData)) {
+                    value["name"] = key;
+                    metricsListData.editableList('addItem', value)
+                };
+
+                // Selection of Eond / Eon
+                function updateTextBoxEond() {
+                    if (that.isEond) {
+                        $("#node-input-spEond").prop('disabled', false);
+                    } else {
+                        $("#node-input-spEond").prop('disabled', true);
+                    }
+                }
+                function updateselectButtonNodeType() {
+
+                    updateTextBoxEond(); // Update text box state based on selected option
+
+                    var savedOption = (that.isEond) ? "eond" : "eon";
+                    $(".device-type-button-group").each(function() {
+                        if ($(this).attr('data-value') === savedOption) {
+                            $(this).addClass("active");
+                        } else {
+                            $(this).removeClass("active");
+                        }
+                    });
+                }
+                $(".device-type-button-group").on("click", function() {
+                    $(".device-type-button-group").removeClass("selected");
+                    $(this).addClass("selected")
+                    that.isEond = $(this).attr("data-value") == "eond";
+                    updateTextBoxEond();
+                });
+                updateselectButtonNodeType();
+            },
+            oneditsave: function() {
+                var node = this;
+                node.metricsData = getMetricsListData();
+                node.metricsCmd = getMetricsListCmd();
+                node.outputs = Object.keys(this.metricsData).length;
+                this.warn("Saving...");
+                this.warn($(this).attr('data-value'));
+            },
+
+            labelStyle: function() {
+                return this.name?"node_label_italic":"";
+            }
+        });
+    })();
 </script>

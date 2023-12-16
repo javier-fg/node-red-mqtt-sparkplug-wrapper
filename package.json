@@ -1,6 +1,6 @@
 {
   "name": "node-red-mqtt-sparkplug-wrapper",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/javier-fg/node-red-mqtt-sparkplug-wrapper"
@@ -16,7 +16,6 @@
     }
   },
   "scripts": {
-    "test": "mocha \"test/**/*_spec.js\""
   },
   "keywords": [
     "MQTT",

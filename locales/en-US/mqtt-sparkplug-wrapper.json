@@ -43,7 +43,9 @@
             "receiveMaximum": "Receive Max",
             "session": "Session",
             "delay": "Delay",
-            "birthImmediately" : "Send Birth Immediately"
+            "birthImmediately" : "Send Birth Immediately",
+            "parseBirthData" : "Include and parse BIRTH message metrics",
+            "parseCommandData" : "Include and parse COMMAND message metrics"
         },
         "tip": {
             "storeforward" : "all the buffered values will be kept in memory. Do not use this for high thoughput applications.",
@@ -62,7 +64,9 @@
             "sparkplug": "Sparkplug",
             "sparkplugNode": "Sparkplug Node",
             "advanced" : "Advanced",
-            "metrics" : " Metrics"
+            "metrics" : " Metrics",
+            "metrics-data" : " Data Metrics",
+            "metrics-cmd" : " Command Metrics"
         },
         "placeholder": {
             "clientid": "Leave blank for auto generated",
@@ -97,8 +101,9 @@
             "device-unknown-metric": "The metric '__name__' is not recognized by the device",
             "device-no-metrics": "Metrics should be an Array",
             "payload-type-object": "Payload must be of type object",
+            "payload-cmd-type-wrong": "Payload must be of type number, boolean, string",
+            "unknown-cmd-name": "Unknown command name. Command is not part of node command metrics.",
             "unable-to-decode-message": "Unable to decode __type__ message. the error is : __error__",
-            "unable-to-encode-message": "Unable to encode __type__ message. the error is : __error__",
             "not-defined": "Topic is not defined",
             "invalid-metric-definition": "Unable to use '__name__' as a metric. the error is : __error__"
         }
