@@ -1316,7 +1316,7 @@ module.exports = function(RED) {
             // Send Commands
             this.on("input",function(msg,send,done) {
 
-                // this.debug(`Msg value: ${msg.payload}, Type:, ${typeof msg.payload}`);
+               // this.debug(`Msg value: ${msg.payload}, Type:, ${typeof msg.payload}`);
 
                 // Check if the payload is correct type
                 if ( msg.hasOwnProperty("payload") && (typeof msg.payload === 'number' || typeof msg.payload === 'string' || typeof msg.payload === 'boolean' )){
@@ -1334,7 +1334,7 @@ module.exports = function(RED) {
                             var _m = { "type" : this.metricsCmd[_cmd]["dataType"], "value": msg.payload, "name": _cmd};
                             _metrics.push(_m);
 
-                            // this.log(JSON.stringify(_metrics, null, 2));
+                            // this.debug(JSON.stringify(_metrics, null, 2));
 
                             // Send CMD if broker is connected, otherwise data will be lost.
                             if (this.brokerConn.connected) {
@@ -1402,6 +1402,7 @@ module.exports = function(RED) {
                     var topic = topic_;
 
                     // node.debug(`Data received on topic: ${topic}`);
+                    // node.debug(`${JSON.stringify(payload)}`);
 
                     // Check msg type and if we need to parse it.
                     let msgType = topic.split('/')[2].substring(1);  // Get message type without first character
@@ -1423,13 +1424,13 @@ module.exports = function(RED) {
                                     if( node.metricsData.hasOwnProperty(m.name)){
 
                                         // Check if the value is valid
-                                        if(m.value)
+                                        if(m.value != null)
                                             _validMessages[m.name] = { "payload": m.value, "topic": m.name, "type": m.type};
                                     }
                                 }
                             })
 
-                            // node.log(JSON.stringify(_validMessages, null, 2));
+                            // node.debug(JSON.stringify(_validMessages));
 
                             // Generate the output messages
                             if(_validMessages){
@@ -1444,7 +1445,7 @@ module.exports = function(RED) {
                                         _messages.push(null);  // No message
                                 }
 
-                                // node.log(JSON.stringify(_messages, null, 2));
+                                // node.debug(JSON.stringify(_messages));
 
                                 node.send(_messages);   // Send the parse metrics messages to the different outputs.
                             }
