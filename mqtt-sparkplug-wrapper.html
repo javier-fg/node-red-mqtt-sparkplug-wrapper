@@ -412,7 +412,7 @@
                     }).appendTo(row);
                     var group0 = $('<optgroup/>', { label: "Datatypes" }).appendTo(selectField);
                     
-                    var dt = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"];
+                    var dt = ["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64","Float", "Double", "Boolean" , "String", "Unknown"];
                     dt.forEach(d => {
                         let option = $("<option></option>").val(d).text(d);
                         group0.append(option);
@@ -787,7 +787,7 @@ RED.nodes.registerType('sparkplug out',{
                         }).appendTo(row);
                         var group0 = $('<optgroup/>', { label: "Datatypes" }).appendTo(selectField);
 
-                        var dt = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"];
+                        var dt = ["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64", "Float", "Double", "Boolean" , "String", "Unknown"];
                         dt.forEach(d => {
                             let option = $("<option></option>").val(d).text(d);
                             group0.append(option);
@@ -826,7 +826,7 @@ RED.nodes.registerType('sparkplug out',{
                         }).appendTo(row);
                         var group0 = $('<optgroup/>', { label: "Datatypes" }).appendTo(selectField);
 
-                        var dt = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"];
+                        var dt = ["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64", "Float", "Double", "Boolean" , "String", "Unknown"];
                         dt.forEach(d => {
                             let option = $("<option></option>").val(d).text(d);
                             group0.append(option);

@@ -130,7 +130,7 @@ module.exports = function(RED) {
 
         var node = this;
 
-        this.dataTypes = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"],
+        this.dataTypes = ["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64", "Float", "Double", "Boolean" , "String", "Unknown"],
         this.broker = n.broker;
         this.name = n.name;
         this.spEond = n.spEond||"sp-eond",
@@ -1287,7 +1287,7 @@ module.exports = function(RED) {
 
         var node = this;
 
-        this.dataTypes = ["Int8", "Int16", "Int32", "Int64", "Float", "Double", "Boolean" , "String", "Unknown"],
+        this.dataTypes = ["Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64", "Float", "Double", "Boolean" , "String", "Unknown"],
             this.broker = n.broker;
         this.name = n.name;
         this.spEond = n.spEond||"sp-eond",
